@@ -1,0 +1,169 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Accesos | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/lista_accesos.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section class="accesos-page">
+
+    <div class="accesos-header">
+
+        <div>
+            <span class="accesos-label">
+                CONTROL DE ACCESOS
+            </span>
+
+            <h1>
+                Historial de entradas
+            </h1>
+
+            <p>
+                Consulta accesos permitidos, denegados, horarios de entrada y motivos de validación.
+            </p>
+        </div>
+
+        <a href="{% url 'escanear_qr' %}" class="scan-btn">
+            Escanear QR
+        </a>
+
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <span>Total accesos</span>
+            <strong>{{ total_accesos }}</strong>
+        </div>
+
+        <div class="stat-card success-stat">
+            <span>Permitidos</span>
+            <strong>{{ accesos_permitidos }}</strong>
+        </div>
+
+        <div class="stat-card danger-stat">
+            <span>Denegados</span>
+            <strong>{{ accesos_denegados }}</strong>
+        </div>
+
+    </div>
+
+    <div class="accesos-tools">
+
+        <form method="GET" class="search-box">
+
+            <input 
+                type="text" 
+                name="q" 
+                value="{{ query }}" 
+                placeholder="Buscar por cliente, teléfono, correo o motivo..."
+            >
+
+            <button type="submit">
+                Buscar
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="accesos-table-card">
+
+        {% if accesos %}
+
+            <div class="accesos-table">
+
+                <div class="accesos-table-head">
+                    <span>Cliente</span>
+                    <span>Fecha</span>
+                    <span>Hora</span>
+                    <span>Resultado</span>
+                    <span>Motivo</span>
+                    <span>Acciones</span>
+                </div>
+
+                {% for acceso in accesos %}
+
+                    <div class="accesos-table-row">
+
+                        <div class="cliente-info">
+
+                            {% if acceso.cliente.qr_imagen %}
+                                <img src="{{ acceso.cliente.qr_imagen.url }}" alt="QR">
+                            {% else %}
+                                <div class="avatar-placeholder">
+                                    {{ acceso.cliente.nombre|slice:":1" }}
+                                </div>
+                            {% endif %}
+
+                            <div>
+                                <strong>{{ acceso.cliente.nombre }}</strong>
+                                <small>{{ acceso.cliente.email }}</small>
+                            </div>
+
+                        </div>
+
+                        <div class="date-info">
+                            {{ acceso.fecha_hora|date:"d/m/Y" }}
+                        </div>
+
+                        <div class="hour-info">
+                            {{ acceso.fecha_hora|time:"H:i" }}
+                        </div>
+
+                        <div>
+                            {% if acceso.acceso_permitido %}
+                                <span class="access-status status-success">
+                                    Permitido
+                                </span>
+                            {% else %}
+                                <span class="access-status status-danger">
+                                    Denegado
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="motivo-info">
+                            {{ acceso.motivo|default:"Sin motivo" }}
+                        </div>
+
+                        <div class="actions-box">
+
+                            <a href="{% url 'detalle_cliente' acceso.cliente.id %}" class="action-btn view">
+                                Perfil
+                            </a>
+
+                            <a href="{% url 'credencial_cliente' acceso.cliente.id %}" class="action-btn credential">
+                                Credencial
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-access-box">
+                <h3>No hay accesos registrados</h3>
+                <p>
+                    Cuando escanees códigos QR, los accesos aparecerán aquí automáticamente.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

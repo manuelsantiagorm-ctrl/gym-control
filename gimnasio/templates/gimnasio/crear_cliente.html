@@ -1,0 +1,151 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Nuevo cliente | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/crear_cliente.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section class="crear-cliente-page">
+
+    <div class="crear-cliente-header">
+
+        <div>
+            <span class="crear-label">
+                NUEVO CLIENTE
+            </span>
+
+            <h1>
+                Registrar cliente
+            </h1>
+
+            <p>
+                Agrega un nuevo cliente al sistema. El código QR se generará automáticamente al guardar.
+            </p>
+        </div>
+
+        <a href="{% url 'lista_clientes' %}" class="back-client-btn">
+            Volver a clientes
+        </a>
+
+    </div>
+
+    {% if messages %}
+        <div class="messages-box">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="crear-cliente-layout">
+
+        <div class="info-preview-card">
+
+            <div class="preview-icon">
+                <i class="bx bx-user-plus"></i>
+            </div>
+
+            <h3>
+                Alta de cliente
+            </h3>
+
+            <p>
+                Al registrar al cliente, el sistema creará su perfil y generará su código QR de acceso.
+            </p>
+
+            <div class="preview-list">
+                <div>
+                    <i class="bx bx-check-circle"></i>
+                    <span>Perfil del cliente</span>
+                </div>
+
+                <div>
+                    <i class="bx bx-check-circle"></i>
+                    <span>Código QR automático</span>
+                </div>
+
+                <div>
+                    <i class="bx bx-check-circle"></i>
+                    <span>Credencial digital</span>
+                </div>
+
+                <div>
+                    <i class="bx bx-check-circle"></i>
+                    <span>Historial de accesos</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="crear-form-card">
+
+            <h3>
+                Datos del cliente
+            </h3>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Nombre completo</label>
+                    <input 
+                        type="text" 
+                        name="nombre" 
+                        placeholder="Ej. Manuel Santiago"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input 
+                        type="text" 
+                        name="telefono" 
+                        placeholder="Ej. 55 1234 5678"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Correo electrónico</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        placeholder="Ej. cliente@gmail.com"
+                        required
+                    >
+                </div>
+
+                <div class="check-group">
+                    <input 
+                        type="checkbox" 
+                        name="activo" 
+                        id="activo" 
+                        checked
+                    >
+
+                    <label for="activo">
+                        Cliente activo
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-client-btn">
+                    Crear cliente
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

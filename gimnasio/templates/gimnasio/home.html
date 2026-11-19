@@ -1,0 +1,42 @@
+{% extends 'gimnasio/base.html' %}
+
+{% block title %}
+Inicio | Gym Control
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="badge">
+            SISTEMA PROFESIONAL DE GIMNASIO
+        </span>
+
+        <h1>
+            Control total de
+            <span>clientes y accesos</span>
+        </h1>
+
+        <p>
+            Automatiza membresías, pagos y entradas mediante
+            códigos QR en tiempo real.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="{% url 'dashboard' %}" class="btn-primary">
+                Entrar al Sistema
+            </a>
+
+            <a href="{% url 'escanear_qr' %}" class="btn-secondary">
+                Escanear QR
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

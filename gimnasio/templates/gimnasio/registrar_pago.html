@@ -1,0 +1,264 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Registrar pago | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/registrar_pago.css' %}?v=3">
+{% endblock %}
+
+{% block content %}
+
+<section class="payment-page">
+
+    <div class="payment-header">
+
+        <div>
+            <span class="payment-label">
+                REGISTRAR PAGO
+            </span>
+
+            <h1>
+                {{ cliente.nombre }}
+            </h1>
+
+            <p>
+                Registra el pago del cliente y renueva automáticamente su membresía.
+            </p>
+        </div>
+
+        <a href="{% url 'detalle_cliente' cliente.id %}" class="back-btn">
+            Volver al perfil
+        </a>
+
+    </div>
+
+    {% if messages %}
+        <div class="messages-box">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="payment-layout">
+
+        <div class="client-summary-card">
+
+            <h3>
+                Cliente
+            </h3>
+
+            <div class="summary-row">
+                <span>Nombre</span>
+                <strong>{{ cliente.nombre }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Teléfono</span>
+                <strong>{{ cliente.telefono|default:"No registrado" }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Correo</span>
+                <strong>{{ cliente.email }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Fecha actual</span>
+                <strong>{{ hoy|date:"d/m/Y" }}</strong>
+            </div>
+
+            {% if membresia_actual %}
+                <div class="summary-row">
+                    <span>Membresía actual</span>
+                    <strong>{{ membresia_actual.get_tipo_display }}</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Vence</span>
+                    <strong>{{ membresia_actual.fecha_fin|date:"d/m/Y" }}</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Estado</span>
+                    <strong>{{ membresia_actual.estado }}</strong>
+                </div>
+            {% else %}
+                <div class="summary-row">
+                    <span>Membresía actual</span>
+                    <strong>Sin membresía</strong>
+                </div>
+            {% endif %}
+
+            {% if cliente.qr_imagen %}
+                <div class="mini-qr">
+                    <img src="{{ cliente.qr_imagen.url }}" alt="QR de {{ cliente.nombre }}">
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="payment-form-card">
+
+            <h3>
+                Datos del pago
+            </h3>
+
+            <p class="payment-help">
+                Si el cliente todavía tiene membresía vigente, el sistema sumará la nueva membresía desde su fecha de vencimiento.
+                Si ya venció o no tiene membresía, empezará desde hoy.
+            </p>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>
+                        Tipo de membresía
+                    </label>
+
+                    <select name="tipo_membresia" id="tipo_membresia" required>
+                        <option value="dia">Día</option>
+                        <option value="semanal">Semanal</option>
+                        <option value="quincenal">Quincenal</option>
+                        <option value="mensual" selected>Mensual</option>
+                        <option value="trimestral">Trimestral</option>
+                        <option value="anual">Anual</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Cantidad a pagar
+                    </label>
+
+                    <input 
+                        type="number"
+                        name="cantidad_periodos"
+                        id="cantidad_periodos"
+                        min="1"
+                        value="1"
+                        required
+                    >
+
+                    <small class="form-help">
+                        Ejemplo: si eliges mensual y pones 3, se agregarán 3 meses.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Monto pagado
+                    </label>
+
+                    <input 
+                        type="number" 
+                        name="monto" 
+                        step="0.01" 
+                        min="1" 
+                        placeholder="Ej. 500.00" 
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Método de pago
+                    </label>
+
+                    <select name="metodo_pago" required>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="tarjeta">Tarjeta</option>
+                        <option value="transferencia">Transferencia</option>
+                        <option value="mixto">Mixto</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Notas
+                    </label>
+
+                    <textarea 
+                        name="notas"
+                        rows="4"
+                        placeholder="Ej. Pago de promoción, descuento, pago parcial, observaciones..."
+                    ></textarea>
+                </div>
+
+                <div class="preview-box">
+                    <span>Renovación automática</span>
+                    <strong id="renovacion_preview">
+                        Se agregará 1 mes de membresía.
+                    </strong>
+                </div>
+
+                <button type="submit" class="submit-payment-btn">
+                    Registrar pago y renovar membresía
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const tipoInput = document.getElementById("tipo_membresia");
+    const cantidadInput = document.getElementById("cantidad_periodos");
+    const preview = document.getElementById("renovacion_preview");
+
+    function actualizarPreview() {
+        if (!tipoInput || !cantidadInput || !preview) {
+            return;
+        }
+
+        const tipo = tipoInput.value;
+        let cantidad = parseInt(cantidadInput.value || "1");
+
+        if (cantidad < 1 || isNaN(cantidad)) {
+            cantidad = 1;
+        }
+
+        const nombres = {
+            "dia": cantidad === 1 ? "día" : "días",
+            "semanal": cantidad === 1 ? "semana" : "semanas",
+            "quincenal": cantidad === 1 ? "quincena" : "quincenas",
+            "mensual": cantidad === 1 ? "mes" : "meses",
+            "trimestral": cantidad === 1 ? "trimestre" : "trimestres",
+            "anual": cantidad === 1 ? "año" : "años"
+        };
+
+        const equivalencias = {
+            "dia": `${cantidad} ${cantidad === 1 ? "día" : "días"}`,
+            "semanal": `${cantidad * 7} días`,
+            "quincenal": `${cantidad * 15} días`,
+            "mensual": `${cantidad} ${cantidad === 1 ? "mes" : "meses"}`,
+            "trimestral": `${cantidad * 3} meses`,
+            "anual": `${cantidad} ${cantidad === 1 ? "año" : "años"}`
+        };
+
+        preview.textContent = `Se agregará ${cantidad} ${nombres[tipo] || "periodo"} de membresía. Equivale a ${equivalencias[tipo] || "la duración seleccionada"}.`;
+    }
+
+    if (tipoInput) {
+        tipoInput.addEventListener("change", actualizarPreview);
+    }
+
+    if (cantidadInput) {
+        cantidadInput.addEventListener("input", actualizarPreview);
+    }
+
+    actualizarPreview();
+</script>
+{% endblock %}

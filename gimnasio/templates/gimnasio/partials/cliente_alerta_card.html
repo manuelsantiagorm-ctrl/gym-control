@@ -1,0 +1,58 @@
+<div class="cliente-alerta-card {{ tipo_alerta }}">
+
+    <div class="cliente-alerta-main">
+
+        {% if cliente.qr_imagen %}
+            <img src="{{ cliente.qr_imagen.url }}" alt="QR de {{ cliente.nombre }}">
+        {% else %}
+            <div class="cliente-alerta-avatar">
+                {{ cliente.nombre|slice:":1" }}
+            </div>
+        {% endif %}
+
+        <div>
+            <strong>{{ cliente.nombre }}</strong>
+            <small>{{ cliente.telefono|default:"Sin teléfono" }}</small>
+            <small>{{ cliente.email }}</small>
+        </div>
+
+    </div>
+
+    <div class="cliente-alerta-info">
+
+        {% if cliente.alerta_membresia %}
+            <span>{{ cliente.alerta_membresia.get_tipo_display }}</span>
+            <strong>Vence: {{ cliente.alerta_membresia.fecha_fin|date:"d/m/Y" }}</strong>
+
+            {% if cliente.dias_restantes_alerta == 0 %}
+                <small>Vence hoy</small>
+            {% elif cliente.dias_restantes_alerta > 0 %}
+                <small>Faltan {{ cliente.dias_restantes_alerta }} día{% if cliente.dias_restantes_alerta != 1 %}s{% endif %}</small>
+            {% else %}
+                <small>Venció hace {{ cliente.dias_restantes_alerta|stringformat:"d"|cut:"-" }} día{% if cliente.dias_restantes_alerta != -1 %}s{% endif %}</small>
+            {% endif %}
+        {% else %}
+            <span>Sin membresía</span>
+            <strong>No tiene membresía registrada</strong>
+            <small>Registra un pago para activarlo</small>
+        {% endif %}
+
+    </div>
+
+    <div class="cliente-alerta-actions">
+
+        <a href="{% url 'detalle_cliente' cliente.id %}" class="alerta-action view">
+            Perfil
+        </a>
+
+        <a href="{% url 'registrar_pago_cliente' cliente.id %}" class="alerta-action pay">
+            Renovar
+        </a>
+
+        <a href="{% url 'credencial_cliente' cliente.id %}" class="alerta-action credential">
+            QR
+        </a>
+
+    </div>
+
+</div>

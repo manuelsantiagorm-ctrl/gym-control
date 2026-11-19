@@ -1,0 +1,306 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Perfil de {{ cliente.nombre }} | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/detalle_cliente.css' %}?v=30">
+{% endblock %}
+
+{% block content %}
+
+<section class="detalle-cliente-page">
+
+    <!-- ENCABEZADO DEL PERFIL -->
+    <div class="detalle-header">
+
+        <div>
+            <span class="detalle-label">
+                PERFIL DEL CLIENTE
+            </span>
+
+            <h1>
+                {{ cliente.nombre }}
+            </h1>
+
+            <p>
+                Consulta membresía, pagos, vencimiento, código QR y accesos recientes.
+            </p>
+        </div>
+
+        <div class="detalle-actions">
+
+            <div class="estado-cliente estado-{{ estado_color }}">
+                {{ estado_membresia }}
+            </div>
+
+            <a href="{% url 'editar_cliente' cliente.id %}" class="pay-btn edit-btn">
+                Editar cliente
+            </a>
+
+            <a href="{% url 'credencial_cliente' cliente.id %}" class="pay-btn">
+                Ver credencial
+            </a>
+
+            <a href="{% url 'registrar_pago_cliente' cliente.id %}" class="pay-btn">
+                Registrar pago
+            </a>
+            {% if cliente.activo %}
+            <a href="{% url 'desactivar_cliente' cliente.id %}" class="pay-btn danger-btn">Desactivar cliente
+
+            </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% if messages %}
+        <div class="messages-box">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- TARJETAS DE INFORMACIÓN -->
+    <div class="detalle-grid">
+
+        <!-- INFORMACIÓN PERSONAL -->
+        <div class="detalle-card">
+
+            <div class="card-title">
+                <span>Información personal</span>
+            </div>
+
+            <div class="detalle-row">
+                <p>Nombre</p>
+                <strong>{{ cliente.nombre }}</strong>
+            </div>
+
+            <div class="detalle-row">
+                <p>Teléfono</p>
+                <strong>{{ cliente.telefono|default:"No registrado" }}</strong>
+            </div>
+
+            <div class="detalle-row">
+                <p>Correo</p>
+                <strong>{{ cliente.email }}</strong>
+            </div>
+
+            <div class="detalle-row">
+                <p>Fecha de registro</p>
+                <strong>{{ cliente.fecha_registro|date:"d/m/Y" }}</strong>
+            </div>
+
+            <div class="detalle-row">
+                <p>Tiempo como cliente</p>
+                <strong>{{ meses_registrado }} meses</strong>
+            </div>
+
+            <div class="detalle-row">
+                <p>Estado del cliente</p>
+                <strong>
+                    {% if cliente.activo %}
+                        Activo
+                    {% else %}
+                        Inactivo
+                    {% endif %}
+                </strong>
+            </div>
+
+        </div>
+
+        <!-- MEMBRESÍA ACTUAL -->
+        <div class="detalle-card">
+
+            <div class="card-title">
+                <span>Membresía actual</span>
+            </div>
+
+            {% if membresia_actual %}
+
+                <div class="detalle-row">
+                    <p>Tipo</p>
+                    <strong>{{ membresia_actual.get_tipo_display }}</strong>
+                </div>
+
+                <div class="detalle-row">
+                    <p>Inicio</p>
+                    <strong>{{ membresia_actual.fecha_inicio|date:"d/m/Y" }}</strong>
+                </div>
+
+                <div class="detalle-row">
+                    <p>Vencimiento</p>
+                    <strong>{{ membresia_actual.fecha_fin|date:"d/m/Y" }}</strong>
+                </div>
+
+                <div class="detalle-row">
+                    <p>Estado</p>
+                    <strong>{{ membresia_actual.estado }}</strong>
+                </div>
+
+                <div class="detalle-row">
+                    <p>Días restantes</p>
+                    <strong>
+                        {{ membresia_actual.dias_restantes }} día{% if membresia_actual.dias_restantes != 1 %}s{% endif %}
+                    </strong>
+                </div>
+
+                <div class="detalle-row">
+                    <p>Activa</p>
+                    <strong>
+                        {% if membresia_actual.activa %}
+                            Sí
+                        {% else %}
+                            No
+                        {% endif %}
+                    </strong>
+                </div>
+
+            {% else %}
+
+                <div class="empty-box">
+                    Este cliente aún no tiene una membresía registrada.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <!-- PAGOS -->
+        <div class="detalle-card">
+
+            <div class="card-title">
+                <span>Pagos</span>
+            </div>
+
+            <div class="detalle-row">
+                <p>Último pago</p>
+                <strong>
+                    {% if ultimo_pago %}
+                        ${{ ultimo_pago.monto }}
+                    {% else %}
+                        Sin pagos
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detalle-row">
+                <p>Fecha del último pago</p>
+                <strong>
+                    {% if ultimo_pago %}
+                        {{ ultimo_pago.fecha_pago|date:"d/m/Y" }}
+                    {% else %}
+                        No registrado
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detalle-row">
+                <p>Método de pago</p>
+                <strong>
+                    {% if ultimo_pago %}
+                        {{ ultimo_pago.get_metodo_pago_display }}
+                    {% else %}
+                        No registrado
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detalle-row">
+                <p>Membresía pagada</p>
+                <strong>
+                    {% if ultimo_pago %}
+                        {{ ultimo_pago.get_tipo_membresia_display }} x{{ ultimo_pago.cantidad_periodos }}
+                    {% else %}
+                        No registrado
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detalle-row">
+                <p>Total pagado</p>
+                <strong>${{ total_pagado }}</strong>
+            </div>
+
+        </div>
+
+        <!-- CÓDIGO QR -->
+        <div class="detalle-card qr-card">
+
+            <div class="card-title">
+                <span>Código QR</span>
+            </div>
+
+            {% if cliente.qr_imagen %}
+                <div class="qr-preview">
+                    <img src="{{ cliente.qr_imagen.url }}" alt="QR de {{ cliente.nombre }}">
+                </div>
+            {% else %}
+                <div class="empty-box">
+                    No hay QR generado.
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- ÚLTIMOS ACCESOS -->
+    <div class="accesos-card">
+
+        <div class="card-title">
+            <span>Últimos accesos</span>
+        </div>
+
+        {% if ultimos_accesos %}
+
+            <div class="tabla-accesos">
+
+                <div class="tabla-head">
+                    <span>Fecha</span>
+                    <span>Hora</span>
+                    <span>Resultado</span>
+                    <span>Motivo</span>
+                </div>
+
+                {% for acceso in ultimos_accesos %}
+                    <div class="tabla-row">
+
+                        <span>{{ acceso.fecha_hora|date:"d/m/Y" }}</span>
+
+                        <span>{{ acceso.fecha_hora|time:"H:i" }}</span>
+
+                        <span>
+                            {% if acceso.acceso_permitido %}
+                                <strong class="ok">Permitido</strong>
+                            {% else %}
+                                <strong class="bad">Denegado</strong>
+                            {% endif %}
+                        </span>
+
+                        <span>{{ acceso.motivo|default:"Sin motivo registrado" }}</span>
+
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-box">
+                Todavía no hay registros de acceso para este cliente.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,294 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Dashboard | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/dashboard.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-page">
+
+    <div class="dashboard-header">
+
+        <div>
+            <span class="dashboard-label">
+                PANEL PRINCIPAL
+            </span>
+
+            <h1>
+                Dashboard del gimnasio
+            </h1>
+
+            <p>
+                Resumen general de clientes, membresías, pagos y accesos del sistema.
+            </p>
+        </div>
+
+        <div class="dashboard-date">
+            <span>Hoy</span>
+            <strong>{{ hoy|date:"d/m/Y" }}</strong>
+        </div>
+
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="bx bx-user"></i>
+            </div>
+
+            <div>
+                <span>Clientes totales</span>
+                <strong>{{ total_clientes }}</strong>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="bx bx-check-shield"></i>
+            </div>
+
+            <div>
+                <span>Clientes activos</span>
+                <strong>{{ clientes_activos }}</strong>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="bx bx-id-card"></i>
+            </div>
+
+            <div>
+                <span>Membresías vigentes</span>
+                <strong>{{ membresias_activas }}</strong>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon red">
+                <i class="bx bx-error-circle"></i>
+            </div>
+
+            <div>
+                <span>Sin membresía / vencidos</span>
+                <strong>{{ clientes_vencidos_o_sin_membresia }}</strong>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="bx bx-money"></i>
+            </div>
+
+            <div>
+                <span>Ingresos del mes</span>
+                <strong>${{ ingresos_mes }}</strong>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="bx bx-calendar-check"></i>
+            </div>
+
+            <div>
+                <span>Pagos de hoy</span>
+                <strong>${{ pagos_hoy }}</strong>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="bx bx-log-in-circle"></i>
+            </div>
+
+            <div>
+                <span>Accesos permitidos hoy</span>
+                <strong>{{ accesos_permitidos_hoy }}</strong>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon red">
+                <i class="bx bx-block"></i>
+            </div>
+
+            <div>
+                <span>Accesos denegados hoy</span>
+                <strong>{{ accesos_denegados_hoy }}</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="dashboard-actions">
+
+        <a href="{% url 'crear_cliente' %}" class="quick-action">
+            <i class="bx bx-user-plus"></i>
+            Nuevo cliente
+        </a>
+
+        <a href="{% url 'lista_clientes' %}" class="quick-action">
+            <i class="bx bx-group"></i>
+            Ver clientes
+        </a>
+
+        <a href="{% url 'escanear_qr' %}" class="quick-action">
+            <i class="bx bx-qr-scan"></i>
+            Escanear QR
+        </a>
+
+        <a href="{% url 'lista_pagos' %}" class="quick-action">
+            <i class="bx bx-credit-card"></i>
+            Ver pagos
+        </a>
+
+        <a href="{% url 'lista_accesos' %}" class="quick-action">
+            <i class="bx bx-history"></i>
+            Ver accesos
+        </a>
+
+    </div>
+
+    <div class="dashboard-grid">
+
+        <div class="dashboard-card">
+            <div class="card-head">
+                <h2>Pagos recientes</h2>
+                <a href="{% url 'lista_pagos' %}">Ver todos</a>
+            </div>
+
+            {% if pagos_recientes %}
+
+                <div class="list-box">
+                    {% for pago in pagos_recientes %}
+                        <div class="list-row">
+                            <div>
+                                <strong>{{ pago.cliente.nombre }}</strong>
+                                <span>{{ pago.fecha_pago|date:"d/m/Y H:i" }}</span>
+                            </div>
+
+                            <p>${{ pago.monto }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            {% else %}
+
+                <div class="empty-card">
+                    No hay pagos recientes.
+                </div>
+
+            {% endif %}
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-head">
+                <h2>Accesos recientes</h2>
+                <a href="{% url 'lista_accesos' %}">Ver todos</a>
+            </div>
+
+            {% if accesos_recientes %}
+
+                <div class="list-box">
+                    {% for acceso in accesos_recientes %}
+                        <div class="list-row">
+                            <div>
+                                <strong>{{ acceso.cliente.nombre }}</strong>
+                                <span>{{ acceso.fecha_hora|date:"d/m/Y H:i" }}</span>
+                            </div>
+
+                            {% if acceso.acceso_permitido %}
+                                <p class="text-green">Permitido</p>
+                            {% else %}
+                                <p class="text-red">Denegado</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+            {% else %}
+
+                <div class="empty-card">
+                    No hay accesos recientes.
+                </div>
+
+            {% endif %}
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-head">
+                <h2>Próximas a vencer</h2>
+                <span class="card-pill">7 días</span>
+            </div>
+
+            {% if membresias_por_vencer %}
+
+                <div class="list-box">
+                    {% for membresia in membresias_por_vencer %}
+                        <div class="list-row">
+                            <div>
+                                <strong>{{ membresia.cliente.nombre }}</strong>
+                                <span>{{ membresia.get_tipo_display }}</span>
+                            </div>
+
+                            <p class="text-warning">
+                                {{ membresia.fecha_fin|date:"d/m/Y" }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            {% else %}
+
+                <div class="empty-card">
+                    No hay membresías próximas a vencer.
+                </div>
+
+            {% endif %}
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-head">
+                <h2>Membresías vencidas</h2>
+                <span class="card-pill danger">Alerta</span>
+            </div>
+
+            {% if membresias_vencidas %}
+
+                <div class="list-box">
+                    {% for membresia in membresias_vencidas %}
+                        <div class="list-row">
+                            <div>
+                                <strong>{{ membresia.cliente.nombre }}</strong>
+                                <span>{{ membresia.get_tipo_display }}</span>
+                            </div>
+
+                            <p class="text-red">
+                                {{ membresia.fecha_fin|date:"d/m/Y" }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            {% else %}
+
+                <div class="empty-card">
+                    No hay membresías vencidas.
+                </div>
+
+            {% endif %}
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

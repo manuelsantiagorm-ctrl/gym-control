@@ -1,0 +1,528 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Nuevo producto | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/productos.css' %}?v=13000">
+{% endblock %}
+
+{% block content %}
+
+<section class="crear-producto-page">
+
+    <div class="crear-producto-header">
+        <div>
+            <span class="producto-label">
+                NUEVO PRODUCTO
+            </span>
+
+            <h1>
+                Registrar producto
+            </h1>
+
+            <p>
+                Agrega productos para vender en el punto de venta del gimnasio.
+            </p>
+        </div>
+
+        <div class="crear-producto-actions">
+            <a href="{% url 'lista_productos' %}" class="producto-secondary-btn">
+                Volver a productos
+            </a>
+
+            <a href="{% url 'punto_venta' %}" class="producto-main-btn">
+                Ir al POS
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="producto-messages">
+            {% for message in messages %}
+                <div class="producto-message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="crear-producto-grid">
+
+        <div class="producto-info-panel">
+
+            <div class="info-card-title">
+                <h3>
+                    Inventario del gimnasio
+                </h3>
+
+                <p>
+                    Registra productos como agua, bebidas energéticas, proteína,
+                    toallas, guantes o cualquier artículo que vendas en recepción.
+                </p>
+            </div>
+
+            <div class="info-list">
+
+                <div class="info-item">
+                    <i class="bx bx-barcode"></i>
+                    <span>Compatible con código de barras</span>
+                </div>
+
+                <div class="info-item">
+                    <i class="bx bx-cart"></i>
+                    <span>Listo para punto de venta</span>
+                </div>
+
+                <div class="info-item">
+                    <i class="bx bx-package"></i>
+                    <span>Control automático de stock</span>
+                </div>
+
+                <div class="info-item">
+                    <i class="bx bx-line-chart"></i>
+                    <span>Registro de ventas</span>
+                </div>
+
+            </div>
+
+            <div class="producto-preview-box">
+                <div class="producto-preview-icon">
+                    <i class="bx bx-box"></i>
+                </div>
+
+                <h4>
+                    Producto listo para venta
+                </h4>
+
+                <p>
+                    Después de guardarlo podrás venderlo desde tu módulo de punto de venta.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="producto-form-panel">
+
+            <div class="form-panel-title">
+                <h3>
+                    Datos del producto
+                </h3>
+
+                <p>
+                    Completa la información del nuevo artículo.
+                </p>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" class="producto-form">
+                {% csrf_token %}
+
+                <div class="form-grid">
+
+                    <div class="form-group full">
+                        <label>
+                            Nombre del producto
+                        </label>
+
+                        <input 
+                            type="text"
+                            name="nombre"
+                            placeholder="Ej. Agua Ciel 600ml"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Categoría
+                        </label>
+
+                        <select name="categoria" required>
+                            <option value="agua">Agua embotellada</option>
+                            <option value="energizante">Bebidas energizantes</option>
+                            <option value="proteina">Proteínas</option>
+                            <option value="snack">Snacks saludables</option>
+                            <option value="suplemento">Suplementos</option>
+                            <option value="accesorio">Accesorios</option>
+                            <option value="ropa">Ropa deportiva</option>
+                            <option value="otro">Otros</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Estado
+                        </label>
+
+                        <div class="checkbox-group producto-activo-box">
+                            <label class="checkbox-label">
+                                <input 
+                                    type="checkbox"
+                                    name="activo"
+                                    checked
+                                >
+
+                                <span>
+                                    Producto activo para venta
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>
+                            Código de barras
+                        </label>
+
+                        <div class="barcode-input-group">
+                            <input 
+                                type="text"
+                                name="codigo_barras"
+                                id="codigoBarrasInput"
+                                placeholder="Escanea o escribe el código"
+                                required
+                            >
+
+                            <button 
+                                type="button" 
+                                id="btnEscanearCodigo" 
+                                class="scan-barcode-btn"
+                            >
+                                <i class="bx bx-barcode-reader"></i>
+                                Escanear
+                            </button>
+                        </div>
+
+                        <small class="field-help">
+                            Desde computadora puedes escribirlo. Desde celular puedes usar la cámara.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Precio de venta
+                        </label>
+
+                        <input 
+                            type="number"
+                            step="0.01"
+                            name="precio_venta"
+                            placeholder="Ej. 25"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Costo
+                        </label>
+
+                        <input 
+                            type="number"
+                            step="0.01"
+                            name="costo"
+                            placeholder="Ej. 12"
+                            value="0"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Stock inicial
+                        </label>
+
+                        <input 
+                            type="number"
+                            name="stock"
+                            placeholder="Ej. 20"
+                            value="0"
+                            min="0"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Imagen del producto
+                        </label>
+
+                        <input 
+                            type="file"
+                            name="imagen"
+                            accept="image/*"
+                        >
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'lista_productos' %}" class="cancel-btn">
+                        Cancelar
+                    </a>
+
+                    <button type="submit" class="save-btn">
+                        Guardar producto
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- MODAL PARA ESCANEAR CÓDIGO DE BARRAS -->
+<div id="barcodeModal" style="
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(2, 6, 23, 0.92);
+    z-index: 999999999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+">
+
+    <div style="
+        width: 100%;
+        max-width: 620px;
+        background: #111827;
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 28px;
+        padding: 25px;
+        box-shadow: 0 25px 80px rgba(0,0,0,0.75);
+        color: white;
+    ">
+
+        <div style="
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 20px;
+        ">
+
+            <div>
+                <h2 style="margin: 0 0 8px; color: white;">
+                    Escanear código de barras
+                </h2>
+
+                <p style="margin: 0; color: #94a3b8;">
+                    Apunta la cámara al código del producto.
+                </p>
+            </div>
+
+            <button type="button" id="btnCerrarBarcode" style="
+                width: 44px;
+                height: 44px;
+                border: none;
+                border-radius: 14px;
+                background: #0f172a;
+                color: white;
+                font-size: 24px;
+                cursor: pointer;
+            ">
+                ×
+            </button>
+
+        </div>
+
+        <div id="barcodeReader" style="
+            width: 100%;
+            min-height: 300px;
+            background: #020617;
+            border-radius: 20px;
+            overflow: hidden;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.12);
+        "></div>
+
+        <div id="barcodeResult" style="
+            margin-top: 18px;
+            background: rgba(34,197,94,0.12);
+            border: 1px solid rgba(34,197,94,0.35);
+            color: #22c55e;
+            padding: 14px 18px;
+            border-radius: 16px;
+            font-weight: 900;
+            text-align: center;
+        ">
+            Esperando lectura...
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+    let barcodeScanner = null;
+    let barcodeActivo = false;
+
+    console.log("JS de crear producto cargado correctamente");
+
+    function abrirEscanerCodigo() {
+        console.log("Botón Escanear presionado");
+
+        const modal = document.getElementById("barcodeModal");
+        const result = document.getElementById("barcodeResult");
+        const reader = document.getElementById("barcodeReader");
+
+        if (!modal) {
+            alert("No existe barcodeModal en esta página.");
+            return;
+        }
+
+        if (!result) {
+            alert("No existe barcodeResult en esta página.");
+            return;
+        }
+
+        if (!reader) {
+            alert("No existe barcodeReader en esta página.");
+            return;
+        }
+
+        modal.style.display = "flex";
+        result.textContent = "Abriendo escáner...";
+
+        if (barcodeActivo) {
+            return;
+        }
+
+        if (typeof Html5QrcodeScanner === "undefined") {
+            alert("No cargó la librería html5-qrcode. Revisa base.html.");
+            result.textContent = "No cargó la librería html5-qrcode.";
+            return;
+        }
+
+        if (typeof Html5QrcodeSupportedFormats === "undefined") {
+            alert("No cargaron los formatos de html5-qrcode.");
+            result.textContent = "No cargaron los formatos de html5-qrcode.";
+            return;
+        }
+
+        barcodeActivo = true;
+        reader.innerHTML = "";
+
+        barcodeScanner = new Html5QrcodeScanner(
+            "barcodeReader",
+            {
+                fps: 10,
+                qrbox: {
+                    width: 300,
+                    height: 180
+                },
+                rememberLastUsedCamera: true,
+                formatsToSupport: [
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.UPC_E,
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.CODE_93,
+                    Html5QrcodeSupportedFormats.ITF,
+                    Html5QrcodeSupportedFormats.QR_CODE
+                ]
+            },
+            false
+        );
+
+        barcodeScanner.render(
+            function(decodedText) {
+                const input = document.getElementById("codigoBarrasInput");
+
+                if (input) {
+                    input.value = decodedText;
+                }
+
+                result.textContent = "Código detectado: " + decodedText;
+
+                setTimeout(function() {
+                    cerrarEscanerCodigo();
+                }, 1000);
+            },
+            function(errorMessage) {
+                // No mostramos errores repetidos mientras intenta leer.
+            }
+        );
+
+        setTimeout(function () {
+            if (barcodeActivo) {
+                result.textContent = "Cámara activa. Apunta al código de barras.";
+            }
+        }, 1500);
+    }
+
+    function cerrarEscanerCodigo() {
+        console.log("Cerrando escáner");
+
+        const modal = document.getElementById("barcodeModal");
+        const reader = document.getElementById("barcodeReader");
+        const result = document.getElementById("barcodeResult");
+
+        if (modal) {
+            modal.style.display = "none";
+        }
+
+        if (result) {
+            result.textContent = "Esperando lectura...";
+        }
+
+        if (barcodeScanner) {
+            barcodeScanner.clear()
+                .then(function() {
+                    barcodeScanner = null;
+                    barcodeActivo = false;
+
+                    if (reader) {
+                        reader.innerHTML = "";
+                    }
+                })
+                .catch(function(error) {
+                    console.error("Error cerrando escáner:", error);
+
+                    barcodeScanner = null;
+                    barcodeActivo = false;
+
+                    if (reader) {
+                        reader.innerHTML = "";
+                    }
+                });
+        } else {
+            barcodeActivo = false;
+
+            if (reader) {
+                reader.innerHTML = "";
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const botonEscanear = document.getElementById("btnEscanearCodigo");
+        const botonCerrar = document.getElementById("btnCerrarBarcode");
+
+        if (botonEscanear) {
+            botonEscanear.addEventListener("click", abrirEscanerCodigo);
+        } else {
+            console.error("No se encontró btnEscanearCodigo");
+        }
+
+        if (botonCerrar) {
+            botonCerrar.addEventListener("click", cerrarEscanerCodigo);
+        } else {
+            console.error("No se encontró btnCerrarBarcode");
+        }
+    });
+</script>
+
+{% endblock %}

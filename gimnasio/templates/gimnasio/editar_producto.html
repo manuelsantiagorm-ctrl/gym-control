@@ -1,0 +1,283 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Editar producto | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/editar_producto.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section class="editar-producto-page">
+
+    <div class="editar-producto-header">
+
+        <div>
+            <span class="editar-label">
+                EDITAR PRODUCTO
+            </span>
+
+            <h1>
+                {{ producto.nombre }}
+            </h1>
+
+            <p>
+                Actualiza el producto, precio, costo, stock, categoría, imagen y estado de venta.
+            </p>
+        </div>
+
+        <div class="editar-actions">
+            <a href="{% url 'lista_productos' %}" class="secondary-btn">
+                Volver a productos
+            </a>
+
+            <a href="{% url 'punto_venta' %}" class="secondary-btn">
+                Ir al POS
+            </a>
+        </div>
+
+    </div>
+
+    {% if messages %}
+        <div class="messages-box">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="editar-producto-layout">
+
+        <div class="producto-preview-card">
+
+            <div class="producto-img-box">
+                {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                {% else %}
+                    <div class="producto-img-placeholder-edit">
+                        <i class="bx bx-package"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <h3>
+                {{ producto.nombre }}
+            </h3>
+
+            <p>
+                Código: {{ producto.codigo_barras }}
+            </p>
+
+            <div class="preview-status">
+                {% if producto.activo %}
+                    <span class="status-active">Producto activo</span>
+                {% else %}
+                    <span class="status-inactive">Producto inactivo</span>
+                {% endif %}
+            </div>
+
+            <div class="preview-info">
+                <div>
+                    <span>Precio venta</span>
+                    <strong>${{ producto.precio_venta }}</strong>
+                </div>
+
+                <div>
+                    <span>Costo</span>
+                    <strong>${{ producto.costo }}</strong>
+                </div>
+
+                <div>
+                    <span>Stock actual</span>
+                    <strong>{{ producto.stock }}</strong>
+                </div>
+
+                <div>
+                    <span>Stock mínimo</span>
+                    <strong>{{ producto.stock_minimo }}</strong>
+                </div>
+
+                <div>
+                    <span>Categoría</span>
+                    <strong>{{ producto.get_categoria_display }}</strong>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="editar-form-card">
+
+            <h3>
+                Datos del producto
+            </h3>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>
+                            Nombre del producto
+                        </label>
+
+                        <input 
+                            type="text"
+                            name="nombre"
+                            value="{{ producto.nombre }}"
+                            placeholder="Ej. Agua Ciel 600ml"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Código de barras
+                        </label>
+
+                        <input 
+                            type="text"
+                            name="codigo_barras"
+                            value="{{ producto.codigo_barras }}"
+                            placeholder="Ej. 7501234567890"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Categoría
+                        </label>
+
+                        <select name="categoria" required>
+                            {% for valor, nombre in categorias %}
+                                <option value="{{ valor }}" {% if producto.categoria == valor %}selected{% endif %}>
+                                    {{ nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Precio de venta
+                        </label>
+
+                        <input 
+                            type="number"
+                            name="precio_venta"
+                            step="0.01"
+                            min="0.01"
+                            value="{{ producto.precio_venta }}"
+                            placeholder="Ej. 25.00"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Costo
+                        </label>
+
+                        <input 
+                            type="number"
+                            name="costo"
+                            step="0.01"
+                            min="0"
+                            value="{{ producto.costo }}"
+                            placeholder="Ej. 12.00"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Stock
+                        </label>
+
+                        <input 
+                            type="number"
+                            name="stock"
+                            min="0"
+                            value="{{ producto.stock }}"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Stock mínimo
+                        </label>
+
+                        <input 
+                            type="number"
+                            name="stock_minimo"
+                            min="0"
+                            value="{{ producto.stock_minimo }}"
+                            required
+                        >
+
+                        <small class="form-help">
+                            Cuando el stock sea igual o menor a este número, se marcará como bajo stock.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Imagen del producto
+                        </label>
+
+                        <input 
+                            type="file"
+                            name="imagen"
+                            accept="image/*"
+                        >
+
+                        <small class="form-help">
+                            Si no eliges una nueva imagen, se conservará la actual.
+                        </small>
+                    </div>
+
+                </div>
+
+                <div class="form-group check-card">
+                    <label class="checkbox-label">
+                        <input 
+                            type="checkbox"
+                            name="activo"
+                            {% if producto.activo %}checked{% endif %}
+                        >
+
+                        <span>
+                            Producto activo para venta
+                        </span>
+                    </label>
+
+                    <small>
+                        Si desactivas el producto, no debería mostrarse como disponible para vender en el POS.
+                    </small>
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'lista_productos' %}" class="cancel-btn">
+                        Cancelar
+                    </a>
+
+                    <button type="submit" class="save-btn">
+                        Guardar cambios
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

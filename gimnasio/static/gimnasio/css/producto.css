@@ -1,0 +1,690 @@
+/* =========================================================
+   PRODUCTOS | GYM CONTROL
+========================================================= */
+
+.producto-page,
+.crear-producto-page {
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 30px 20px 80px;
+}
+
+/* =========================================================
+   HEADER LISTA / CREAR PRODUCTO
+========================================================= */
+
+.producto-header,
+.crear-producto-header {
+    background: linear-gradient(135deg, #111827, #1f2937);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 28px;
+    padding: 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, .35);
+    margin-bottom: 30px;
+}
+
+.producto-label {
+    display: inline-block;
+    background: rgba(34, 197, 94, .15);
+    color: #22c55e;
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.producto-header h1,
+.crear-producto-header h1 {
+    color: #f8fafc;
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.producto-header p,
+.crear-producto-header p {
+    color: #94a3b8;
+}
+
+.crear-producto-actions {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.producto-secondary-btn,
+.producto-main-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 24px;
+    border-radius: 14px;
+    font-weight: 900;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: .3s;
+}
+
+.producto-secondary-btn {
+    background: transparent;
+    border: 1px solid rgba(148, 163, 184, .35);
+    color: #e5e7eb;
+}
+
+.producto-secondary-btn:hover {
+    background: rgba(148, 163, 184, .12);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.producto-main-btn {
+    background: #22c55e;
+    border: 1px solid #22c55e;
+    color: white;
+}
+
+.producto-main-btn:hover {
+    background: #16a34a;
+    border-color: #16a34a;
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   MENSAJES
+========================================================= */
+
+.producto-messages {
+    margin-bottom: 25px;
+}
+
+.producto-message {
+    padding: 15px 20px;
+    border-radius: 14px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.producto-message.success {
+    background: rgba(34, 197, 94, .15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, .4);
+}
+
+.producto-message.error {
+    background: rgba(239, 68, 68, .15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, .4);
+}
+
+/* =========================================================
+   LAYOUT CREAR PRODUCTO
+========================================================= */
+
+.crear-producto-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 28px;
+    align-items: start;
+}
+
+.producto-info-panel,
+.producto-form-panel {
+    background: #111827;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 26px;
+    padding: 30px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .3);
+}
+
+.info-card-title h3,
+.form-panel-title h3 {
+    color: #f8fafc;
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+}
+
+.info-card-title p,
+.form-panel-title p {
+    color: #94a3b8;
+    line-height: 1.6;
+}
+
+.info-list {
+    display: grid;
+    gap: 14px;
+    margin-top: 26px;
+}
+
+.info-item {
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, .06);
+    padding: 16px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.info-item i {
+    color: #22c55e;
+    font-size: 1.3rem;
+}
+
+.info-item span {
+    color: #e5e7eb;
+    font-weight: 800;
+}
+
+.producto-preview-box {
+    margin-top: 26px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, .12), rgba(15, 23, 42, .95));
+    border: 1px solid rgba(34, 197, 94, .25);
+    padding: 24px;
+    border-radius: 22px;
+    text-align: center;
+}
+
+.producto-preview-icon {
+    width: 70px;
+    height: 70px;
+    background: #22c55e;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.4rem;
+    color: white;
+    margin: 0 auto 18px;
+}
+
+.producto-preview-box h4 {
+    color: #f8fafc;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.producto-preview-box p {
+    color: #94a3b8;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   FORMULARIO
+========================================================= */
+
+.producto-form {
+    margin-top: 26px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    display: block;
+    color: #cbd5e1;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.form-group input {
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, .12);
+    color: white;
+    padding: 15px 18px;
+    border-radius: 14px;
+    outline: none;
+    font-size: 1rem;
+}
+
+.form-group input::placeholder {
+    color: #64748b;
+}
+
+.form-group input:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, .15);
+}
+
+.field-help {
+    margin-top: 8px;
+    display: block;
+    color: #94a3b8;
+    font-size: .85rem;
+    font-weight: 700;
+}
+
+/* =========================================================
+   CÓDIGO DE BARRAS
+========================================================= */
+
+.barcode-input-group {
+    display: grid;
+    grid-template-columns: 1fr 160px;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.scan-barcode-btn {
+    border: none;
+    background: #22c55e;
+    color: white;
+    border-radius: 16px;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: .3s;
+    font-size: .95rem;
+    padding: 0 18px;
+    min-height: 52px;
+}
+
+.scan-barcode-btn i {
+    font-size: 1.3rem;
+}
+
+.scan-barcode-btn:hover {
+    background: #16a34a;
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+
+.checkbox-group {
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, .08);
+    padding: 16px;
+    border-radius: 14px;
+}
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+    margin: 0 !important;
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    width: 18px !important;
+    height: 18px;
+    accent-color: #22c55e;
+}
+
+.checkbox-label span {
+    color: #f8fafc;
+    font-weight: 800;
+}
+
+/* =========================================================
+   BOTONES FORMULARIO
+========================================================= */
+
+.form-actions {
+    margin-top: 28px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.cancel-btn,
+.save-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 24px;
+    border-radius: 16px;
+    font-weight: 900;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.cancel-btn {
+    background: transparent;
+    border: 1px solid rgba(148, 163, 184, .35);
+    color: #e5e7eb;
+}
+
+.cancel-btn:hover {
+    background: rgba(148, 163, 184, .12);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.save-btn {
+    border: none;
+    background: #22c55e;
+    color: white;
+}
+
+.save-btn:hover {
+    background: #16a34a;
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   MODAL ESCÁNER CÓDIGO DE BARRAS
+========================================================= */
+
+.barcode-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(2, 6, 23, .90);
+    backdrop-filter: blur(8px);
+    z-index: 99999999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.barcode-modal.open {
+    display: flex !important;
+}
+
+.barcode-modal-content {
+    width: 100%;
+    max-width: 620px;
+    background: #111827;
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 28px;
+    padding: 25px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, .65);
+    color: white;
+}
+
+.barcode-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.barcode-modal-header h2 {
+    color: #f8fafc;
+    font-size: 1.7rem;
+    margin-bottom: 8px;
+}
+
+.barcode-modal-header p {
+    color: #94a3b8;
+}
+
+.barcode-modal-header button {
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 14px;
+    background: #0f172a;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.barcode-modal-header button:hover {
+    background: #1e293b;
+}
+
+#barcodeReader {
+    width: 100%;
+    min-height: 300px;
+    background: #0f172a;
+    border-radius: 20px;
+    overflow: hidden;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, .08);
+}
+
+#barcodeReader video {
+    width: 100% !important;
+    border-radius: 16px;
+}
+
+#barcodeReader button {
+    background: #22c55e !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 10px 16px !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+}
+
+#barcodeReader select {
+    width: 100% !important;
+    background: #020617 !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, .15) !important;
+    border-radius: 12px !important;
+    padding: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+#barcodeReader span,
+#barcodeReader div {
+    color: #e5e7eb;
+}
+
+.barcode-result {
+    margin-top: 18px;
+    background: rgba(34, 197, 94, .12);
+    border: 1px solid rgba(34, 197, 94, .35);
+    color: #22c55e;
+    padding: 14px 18px;
+    border-radius: 16px;
+    font-weight: 900;
+    text-align: center;
+}
+
+.barcode-result.success {
+    background: rgba(34, 197, 94, .18);
+    border-color: rgba(34, 197, 94, .55);
+    color: #86efac;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width: 1000px) {
+    .crear-producto-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .producto-info-panel {
+        order: 2;
+    }
+
+    .producto-form-panel {
+        order: 1;
+    }
+}
+
+@media(max-width: 900px) {
+
+    .producto-header,
+    .crear-producto-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .producto-header h1,
+    .crear-producto-header h1 {
+        font-size: 2.3rem;
+    }
+
+    .crear-producto-actions {
+        width: 100%;
+    }
+
+    .producto-secondary-btn,
+    .producto-main-btn {
+        flex: 1;
+    }
+}
+
+@media(max-width: 700px) {
+
+    .producto-page,
+    .crear-producto-page {
+        padding: 20px 14px 70px;
+    }
+
+    .producto-header,
+    .crear-producto-header {
+        padding: 25px;
+        border-radius: 22px;
+    }
+
+    .producto-header h1,
+    .crear-producto-header h1 {
+        font-size: 2rem;
+    }
+
+    .producto-info-panel,
+    .producto-form-panel {
+        padding: 22px;
+        border-radius: 22px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .barcode-input-group {
+        grid-template-columns: 1fr;
+    }
+
+    .scan-barcode-btn {
+        padding: 15px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .cancel-btn,
+    .save-btn {
+        width: 100%;
+    }
+
+    .barcode-modal-content {
+        padding: 20px;
+        border-radius: 22px;
+    }
+
+    .barcode-modal-header h2 {
+        font-size: 1.4rem;
+    }
+
+    #barcodeReader {
+        min-height: 260px;
+    }
+}
+.form-group select {
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, .12);
+    color: white;
+    padding: 15px 18px;
+    border-radius: 14px;
+    outline: none;
+    font-size: 1rem;
+}
+
+.form-group select:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, .15);
+}
+
+.producto-activo-box {
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+}
+
+/* =========================
+   ACCIONES EN LISTA PRODUCTOS
+========================= */
+
+.productos-table-header,
+.productos-table-row {
+    grid-template-columns: 1.6fr 1fr .8fr .8fr .7fr .8fr .9fr !important;
+}
+
+.producto-actions-cell {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.producto-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    text-decoration: none;
+    background: rgba(59, 130, 246, .14);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, .35);
+    padding: 10px 14px;
+    border-radius: 13px;
+    font-weight: 900;
+    font-size: .85rem;
+    transition: .25s ease;
+}
+
+.producto-edit-btn:hover {
+    background: rgba(59, 130, 246, .24);
+    transform: translateY(-2px);
+}
+
+.producto-edit-btn i {
+    font-size: 1.1rem;
+}
+
+@media(max-width: 900px) {
+    .productos-table-header {
+        display: none !important;
+    }
+
+    .productos-table-row {
+        grid-template-columns: 1fr !important;
+        gap: 14px;
+    }
+
+    .producto-actions-cell {
+        justify-content: flex-start;
+    }
+}

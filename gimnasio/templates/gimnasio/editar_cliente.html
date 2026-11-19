@@ -1,0 +1,184 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Editar cliente | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/editar_cliente.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section class="editar-cliente-page">
+
+    <div class="editar-cliente-header">
+
+        <div>
+            <span class="editar-label">
+                EDITAR CLIENTE
+            </span>
+
+            <h1>
+                {{ cliente.nombre }}
+            </h1>
+
+            <p>
+                Actualiza la información del cliente, su estado y datos de contacto.
+            </p>
+        </div>
+
+        <div class="editar-actions">
+            <a href="{% url 'detalle_cliente' cliente.id %}" class="secondary-btn">
+                Volver al perfil
+            </a>
+
+            <a href="{% url 'lista_clientes' %}" class="secondary-btn">
+                Ver clientes
+            </a>
+        </div>
+
+    </div>
+
+    {% if messages %}
+        <div class="messages-box">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="editar-cliente-layout">
+
+        <div class="cliente-preview-card">
+
+            <div class="cliente-avatar-box">
+                {% if cliente.qr_imagen %}
+                    <img src="{{ cliente.qr_imagen.url }}" alt="QR de {{ cliente.nombre }}">
+                {% else %}
+                    <div class="avatar-placeholder">
+                        {{ cliente.nombre|slice:":1" }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <h3>
+                {{ cliente.nombre }}
+            </h3>
+
+            <p>
+                {{ cliente.email }}
+            </p>
+
+            <div class="preview-status">
+                {% if cliente.activo %}
+                    <span class="status-active">Cliente activo</span>
+                {% else %}
+                    <span class="status-inactive">Cliente inactivo</span>
+                {% endif %}
+            </div>
+
+            <div class="preview-info">
+                <div>
+                    <span>Teléfono</span>
+                    <strong>{{ cliente.telefono|default:"No registrado" }}</strong>
+                </div>
+
+                <div>
+                    <span>Registro</span>
+                    <strong>{{ cliente.fecha_registro|date:"d/m/Y" }}</strong>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="editar-form-card">
+
+            <h3>
+                Datos del cliente
+            </h3>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>
+                        Nombre completo
+                    </label>
+
+                    <input 
+                        type="text"
+                        name="nombre"
+                        value="{{ cliente.nombre }}"
+                        placeholder="Ej. Manuel Santiago"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Teléfono
+                    </label>
+
+                    <input 
+                        type="text"
+                        name="telefono"
+                        value="{{ cliente.telefono|default:'' }}"
+                        placeholder="Ej. 55 1234 5678"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Correo electrónico
+                    </label>
+
+                    <input 
+                        type="email"
+                        name="email"
+                        value="{{ cliente.email }}"
+                        placeholder="Ej. cliente@gmail.com"
+                        required
+                    >
+                </div>
+
+                <div class="form-group check-card">
+                    <label class="checkbox-label">
+                        <input 
+                            type="checkbox"
+                            name="activo"
+                            {% if cliente.activo %}checked{% endif %}
+                        >
+
+                        <span>
+                            Cliente activo
+                        </span>
+                    </label>
+
+                    <small>
+                        Si desactivas al cliente, no debería poder acceder aunque tenga membresía vigente.
+                    </small>
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'detalle_cliente' cliente.id %}" class="cancel-btn">
+                        Cancelar
+                    </a>
+
+                    <button type="submit" class="save-btn">
+                        Guardar cambios
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

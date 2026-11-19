@@ -1,0 +1,182 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Punto de Venta | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/pos.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section class="pos-page">
+
+    <div class="pos-header">
+        <div>
+            <span class="pos-label">PUNTO DE VENTA</span>
+            <h1>Venta de productos</h1>
+            <p>Escanea productos, genera ventas y descuenta inventario automáticamente.</p>
+        </div>
+
+        <a href="{% url 'lista_productos' %}" class="pos-secondary-btn">
+            Ver productos
+        </a>
+    </div>
+
+    {% if messages %}
+        <div class="pos-messages">
+            {% for message in messages %}
+                <div class="pos-message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="pos-layout">
+
+        <div class="pos-left">
+
+            <div class="scan-card">
+                <h2>Escanear producto</h2>
+
+                <form method="POST" action="{% url 'pos_agregar_producto' %}">
+                    {% csrf_token %}
+
+                    <input 
+                        type="text"
+                        name="codigo_barras"
+                        placeholder="Escanea o escribe el código de barras"
+                        autofocus
+                        autocomplete="off"
+                    >
+
+                    <button type="submit">
+                        Agregar
+                    </button>
+                </form>
+
+                <p>
+                    Si usas lector de código de barras, solo escanea y presiona Enter automáticamente.
+                </p>
+            </div>
+
+            <div class="products-card">
+                <div class="products-head">
+                    <h2>Productos rápidos</h2>
+                    <a href="{% url 'crear_producto' %}">Nuevo producto</a>
+                </div>
+
+                <div class="quick-products">
+                    {% for producto in productos %}
+                        <form method="POST" action="{% url 'pos_agregar_producto' %}" class="quick-product">
+                            {% csrf_token %}
+                            <input type="hidden" name="codigo_barras" value="{{ producto.codigo_barras }}">
+
+                            <button type="submit">
+                                <strong>{{ producto.nombre }}</strong>
+                                <span>${{ producto.precio_venta }}</span>
+                                <small>Stock: {{ producto.stock }}</small>
+                            </button>
+                        </form>
+                    {% empty %}
+                        <div class="empty-pos">
+                            No hay productos registrados.
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="pos-right">
+
+            <div class="cart-card">
+
+                <div class="cart-head">
+                    <h2>Carrito</h2>
+
+                    <a href="{% url 'pos_limpiar' %}">
+                        Limpiar
+                    </a>
+                </div>
+
+                {% if items %}
+
+                    <div class="cart-items">
+
+                        {% for item in items %}
+                            <div class="cart-item">
+
+                                <div>
+                                    <strong>{{ item.producto.nombre }}</strong>
+                                    <span>
+                                        ${{ item.producto.precio_venta }} x {{ item.cantidad }}
+                                    </span>
+                                </div>
+
+                                <div class="cart-item-actions">
+                                    <p>${{ item.subtotal }}</p>
+
+                                    <a href="{% url 'pos_eliminar_producto' item.producto.id %}">
+                                        Quitar
+                                    </a>
+                                </div>
+
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                    <form method="POST" action="{% url 'pos_registrar_venta' %}" class="checkout-form">
+                        {% csrf_token %}
+
+                        <div class="payment-box">
+                            <label>Método de pago</label>
+
+                            <select name="metodo_pago">
+                                <option value="efectivo">Efectivo</option>
+                                <option value="tarjeta">Tarjeta</option>
+                                <option value="transferencia">Transferencia</option>
+                                <option value="mixto">Mixto</option>
+                            </select>
+                        </div>
+
+                        <div class="payment-box">
+                            <label>Notas</label>
+
+                            <textarea name="notas" placeholder="Opcional"></textarea>
+                        </div>
+
+                        <div class="total-box">
+                            <span>Total</span>
+                            <strong>${{ total }}</strong>
+                        </div>
+
+                        <button type="submit" class="finish-sale-btn">
+                            Registrar venta
+                        </button>
+
+                    </form>
+
+                {% else %}
+
+                    <div class="empty-cart">
+                        <i class="bx bx-cart"></i>
+                        <h3>Carrito vacío</h3>
+                        <p>Escanea un producto para iniciar una venta.</p>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

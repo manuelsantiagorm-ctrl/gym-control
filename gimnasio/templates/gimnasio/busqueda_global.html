@@ -1,0 +1,214 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Búsqueda | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/busqueda_global.css' %}?v=20">
+{% endblock %}
+
+{% block content %}
+
+<section class="search-page">
+
+    <div class="search-header">
+
+        <div>
+            <span class="search-label">
+                BÚSQUEDA GLOBAL
+            </span>
+
+            <h1>
+                Resultados de búsqueda
+            </h1>
+
+            {% if query %}
+                <p>
+                    Resultados encontrados para:
+                    <strong>"{{ query }}"</strong>
+                </p>
+            {% else %}
+                <p>
+                    Escribe algo en el buscador superior para encontrar clientes, pagos, membresías o accesos.
+                </p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    {% if query %}
+
+        <div class="search-grid">
+
+            <div class="search-card">
+
+                <div class="search-card-title">
+                    <h2>Clientes</h2>
+                    <span>{{ clientes|length }}</span>
+                </div>
+
+                {% if clientes %}
+
+                    {% for cliente in clientes %}
+                        <div class="result-row">
+
+                            <div>
+                                <strong>{{ cliente.nombre }}</strong>
+                                <p>
+                                    {{ cliente.email }} — {{ cliente.telefono|default:"Sin teléfono" }}
+                                </p>
+                            </div>
+
+                            <a href="{% url 'detalle_cliente' cliente.id %}">
+                                Ver perfil
+                            </a>
+
+                        </div>
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-result">
+                        No se encontraron clientes.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="search-card">
+
+                <div class="search-card-title">
+                    <h2>Pagos</h2>
+                    <span>{{ pagos|length }}</span>
+                </div>
+
+                {% if pagos %}
+
+                    {% for pago in pagos %}
+                        <div class="result-row">
+
+                            <div>
+                                <strong>
+                                    ${{ pago.monto }} — {{ pago.cliente.nombre }}
+                                </strong>
+
+                                <p>
+                                    {{ pago.metodo_pago }} — {{ pago.fecha_pago|date:"d/m/Y H:i" }}
+                                </p>
+                            </div>
+
+                            <a href="{% url 'detalle_cliente' pago.cliente.id %}">
+                                Ver cliente
+                            </a>
+
+                        </div>
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-result">
+                        No se encontraron pagos.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="search-card">
+
+                <div class="search-card-title">
+                    <h2>Membresías</h2>
+                    <span>{{ membresias|length }}</span>
+                </div>
+
+                {% if membresias %}
+
+                    {% for membresia in membresias %}
+                        <div class="result-row">
+
+                            <div>
+                                <strong>
+                                    {{ membresia.cliente.nombre }} — {{ membresia.get_tipo_display }}
+                                </strong>
+
+                                <p>
+                                    {{ membresia.fecha_inicio|date:"d/m/Y" }}
+                                    -
+                                    {{ membresia.fecha_fin|date:"d/m/Y" }}
+                                </p>
+                            </div>
+
+                            <a href="{% url 'detalle_cliente' membresia.cliente.id %}">
+                                Ver perfil
+                            </a>
+
+                        </div>
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-result">
+                        No se encontraron membresías.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="search-card">
+
+                <div class="search-card-title">
+                    <h2>Accesos</h2>
+                    <span>{{ accesos|length }}</span>
+                </div>
+
+                {% if accesos %}
+
+                    {% for acceso in accesos %}
+                        <div class="result-row">
+
+                            <div>
+                                <strong>
+                                    {{ acceso.cliente.nombre }}
+                                    —
+                                    {% if acceso.acceso_permitido %}
+                                        Permitido
+                                    {% else %}
+                                        Denegado
+                                    {% endif %}
+                                </strong>
+
+                                <p>
+                                    {{ acceso.fecha_hora|date:"d/m/Y H:i" }}
+                                    —
+                                    {{ acceso.motivo|default:"Sin motivo" }}
+                                </p>
+                            </div>
+
+                            <a href="{% url 'detalle_cliente' acceso.cliente.id %}">
+                                Ver cliente
+                            </a>
+
+                        </div>
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-result">
+                        No se encontraron accesos.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

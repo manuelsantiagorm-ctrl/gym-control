@@ -1,0 +1,162 @@
+{% extends 'gimnasio/base.html' %}
+
+{% block title %}
+Escanear QR | Gym Control
+{% endblock %}
+
+{% block content %}
+
+<section class="scanner-section">
+
+    <div class="scanner-card">
+
+        <h1>
+            Escanear Código QR
+        </h1>
+
+        <p>
+            Escanea el código del cliente para validar acceso.
+        </p>
+
+        <div id="reader"></div>
+
+        <div id="resultadoEscaneo"></div>
+
+    </div>
+
+</section>
+
+<!-- Librería QR -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<script>
+    let scannerActivo = true;
+
+    function mostrarResultado(tipo, cliente, motivo) {
+        const resultado = document.getElementById("resultadoEscaneo");
+
+        if (!resultado) return;
+
+        if (tipo === "permitido") {
+            resultado.innerHTML = `
+                <div class="success-box">
+                    ✅ ACCESO PERMITIDO
+                    <br><br>
+                    <strong>${cliente}</strong>
+                    <br>
+                    ${motivo}
+                </div>
+            `;
+        } else if (tipo === "duplicado") {
+            resultado.innerHTML = `
+                <div class="error-box">
+                    ⚠️ QR ESCANEADO RECIENTEMENTE
+                    <br><br>
+                    <strong>${cliente}</strong>
+                    <br>
+                    ${motivo}
+                </div>
+            `;
+        } else {
+            resultado.innerHTML = `
+                <div class="error-box">
+                    ❌ ACCESO DENEGADO
+                    <br><br>
+                    <strong>${cliente}</strong>
+                    <br>
+                    ${motivo}
+                </div>
+            `;
+        }
+    }
+
+    async function onScanSuccess(decodedText) {
+        if (!scannerActivo) return;
+
+        scannerActivo = false;
+
+        try {
+            let codigoQR = decodedText.trim();
+
+            /*
+                Si tu QR guarda solo el código:
+                ejemplo: 2f4a-xxxx
+                funciona directo.
+
+                Si algún día tu QR guarda una URL completa:
+                ejemplo: http://127.0.0.1:8000/validar-qr/2f4a-xxxx/
+                esta parte intenta extraer el código.
+            */
+            if (codigoQR.includes("/validar-qr/")) {
+                const partes = codigoQR.split("/validar-qr/");
+                codigoQR = partes[1].replaceAll("/", "");
+            }
+
+            const response = await fetch(`/validar-qr/${codigoQR}/`);
+            const data = await response.json();
+
+            /*
+                Compatible con la vista nueva:
+                status: ok, duplicado, denegado
+
+                Y también con la vista vieja:
+                status: success
+            */
+            if (data.status === "ok" || data.status === "success") {
+                mostrarResultado(
+                    "permitido",
+                    data.cliente || "Cliente",
+                    data.motivo || data.mensaje || "Acceso permitido"
+                );
+            } else if (data.status === "duplicado") {
+                mostrarResultado(
+                    "duplicado",
+                    data.cliente || "Cliente",
+                    data.motivo || "Este QR ya fue escaneado recientemente."
+                );
+            } else {
+                mostrarResultado(
+                    "denegado",
+                    data.cliente || "Cliente no identificado",
+                    data.motivo || data.mensaje || "Acceso denegado"
+                );
+            }
+
+        } catch (error) {
+            console.error("Error al validar QR:", error);
+
+            const resultado = document.getElementById("resultadoEscaneo");
+
+            if (resultado) {
+                resultado.innerHTML = `
+                    <div class="error-box">
+                        ❌ Error al validar el QR.
+                        <br><br>
+                        Intenta escanear nuevamente.
+                    </div>
+                `;
+            }
+        }
+
+        /*
+            Espera 5 segundos antes de permitir otro escaneo.
+            Esto evita que se registren muchos accesos repetidos.
+        */
+        setTimeout(() => {
+            scannerActivo = true;
+        }, 5000);
+    }
+
+    const html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader",
+        {
+            fps: 5,
+            qrbox: 250
+        },
+        false
+    );
+
+    html5QrcodeScanner.render(onScanSuccess);
+</script>
+
+{% endblock %}

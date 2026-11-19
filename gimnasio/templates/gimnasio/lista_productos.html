@@ -1,0 +1,225 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Productos | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/productos.css' %}?v=14000">
+{% endblock %}
+
+{% block content %}
+
+<section class="producto-page">
+
+    <!-- ENCABEZADO PRINCIPAL -->
+    <div class="producto-header">
+
+        <div>
+            <span class="producto-label">
+                INVENTARIO
+            </span>
+
+            <h1>
+                Productos
+            </h1>
+
+            <p>
+                Administra los productos disponibles para vender en el punto de venta del gimnasio.
+            </p>
+        </div>
+
+        <div class="producto-header-actions">
+            <a href="{% url 'punto_venta' %}" class="producto-secondary-btn">
+                Ir al POS
+            </a>
+
+            <a href="{% url 'crear_producto' %}" class="producto-main-btn">
+                Nuevo producto
+            </a>
+        </div>
+
+    </div>
+
+    <!-- MENSAJES -->
+    {% if messages %}
+        <div class="producto-messages">
+            {% for message in messages %}
+                <div class="producto-message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- BUSCADOR -->
+    <div class="producto-search-card">
+
+        <form method="GET" class="producto-search-form">
+
+            <input 
+                type="text"
+                name="q"
+                placeholder="Buscar por nombre o código de barras..."
+                value="{{ query }}"
+            >
+
+            <button type="submit">
+                Buscar
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- PRODUCTOS POR CATEGORÍA -->
+    {% for categoria in categorias %}
+
+        {% if categoria.productos %}
+
+            <section class="categoria-productos-section">
+
+                <div class="categoria-productos-header">
+
+                    <div>
+                        <span class="categoria-productos-label">
+                            {{ categoria.nombre }}
+                        </span>
+
+                        <h2>
+                            {{ categoria.nombre }}
+                        </h2>
+
+                        <p>
+                            {{ categoria.descripcion }}
+                        </p>
+                    </div>
+
+                    <div class="categoria-productos-count">
+                        {{ categoria.productos|length }} producto{% if categoria.productos|length != 1 %}s{% endif %}
+                    </div>
+
+                </div>
+
+                <div class="productos-list-card">
+
+                    <div class="productos-table-header">
+                        <span>Producto</span>
+                        <span>Código</span>
+                        <span>Precio</span>
+                        <span>Costo</span>
+                        <span>Stock</span>
+                        <span>Estado</span>
+                        <span>Acciones</span>
+                    </div>
+
+                    {% for producto in categoria.productos %}
+
+                        <div class="productos-table-row">
+
+                            <div class="producto-info-cell">
+
+                                {% if producto.imagen %}
+                                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                                {% else %}
+                                    <div class="producto-img-placeholder">
+                                        <i class="bx bx-package"></i>
+                                    </div>
+                                {% endif %}
+
+                                <div>
+                                    <strong>
+                                        {{ producto.nombre }}
+                                    </strong>
+
+                                    <small>
+                                        Registrado: {{ producto.fecha_registro|date:"d/m/Y" }}
+                                    </small>
+                                </div>
+
+                            </div>
+
+                            <span>
+                                {{ producto.codigo_barras }}
+                            </span>
+
+                            <span class="price-text">
+                                ${{ producto.precio_venta }}
+                            </span>
+
+                            <span>
+                                ${{ producto.costo }}
+                            </span>
+
+                            <span>
+                                {% if producto.stock <= 0 %}
+                                    <strong class="stock-danger">
+                                        Sin stock
+                                    </strong>
+                                {% elif producto.stock <= producto.stock_minimo %}
+                                    <strong class="stock-warning">
+                                        {{ producto.stock }}
+                                    </strong>
+                                {% else %}
+                                    <strong class="stock-success">
+                                        {{ producto.stock }}
+                                    </strong>
+                                {% endif %}
+                            </span>
+
+                            <span>
+                                {% if producto.activo %}
+                                    <strong class="estado-producto activo">
+                                        Activo
+                                    </strong>
+                                {% else %}
+                                    <strong class="estado-producto inactivo">
+                                        Inactivo
+                                    </strong>
+                                {% endif %}
+                            </span>
+                            <div class="producto-actions-cell">
+                                <a href="{% url 'editar_producto' producto.id %}" class="producto-edit-btn">
+                                    <i class="bx bx-edit"></i>Editar
+                                </a>
+                                {% if producto.activo %}
+                                <a href="{% url 'desactivar_producto' producto.id %}" class="producto-delete-btn">
+                                    <i class="bx bx-block"></i>
+                                    Desactivar
+                                </a>
+                                {% endif %}
+                            </div> 
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+    {% empty %}
+
+        <div class="empty-products">
+            <i class="bx bx-package"></i>
+
+            <h3>
+                No hay productos registrados
+            </h3>
+
+            <p>
+                Agrega tu primer producto para comenzar a vender desde el POS.
+            </p>
+
+            <a href="{% url 'crear_producto' %}">
+                Registrar producto
+            </a>
+        </div>
+
+    {% endfor %}
+
+</section>
+
+{% endblock %}

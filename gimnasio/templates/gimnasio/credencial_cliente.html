@@ -1,0 +1,122 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Credencial de {{ cliente.nombre }} | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/credencial_cliente.css' %}?v=100">
+{% endblock %}
+
+{% block content %}
+
+<section class="credential-page">
+
+    <div class="credential-actions no-print">
+
+        <a href="{% url 'detalle_cliente' cliente.id %}" class="action-secondary">
+            Volver al perfil
+        </a>
+
+        <button onclick="window.print()" class="action-primary">
+            Descargar / Imprimir
+        </button>
+
+    </div>
+
+    <div class="credential-print-area">
+
+        <div class="credential-card">
+
+            <div class="credential-bg-circle circle-one"></div>
+            <div class="credential-bg-circle circle-two"></div>
+
+            <div class="credential-top">
+
+                <div class="brand-box">
+                    <div class="brand-icon">
+                        <i class="bx bx-dumbbell"></i>
+                    </div>
+
+                    <div>
+                        <h2>GYM CONTROL</h2>
+                        <p>Credencial digital de acceso</p>
+                    </div>
+                </div>
+
+                <span class="credential-status status-{{ estado_color }}">
+                    {{ estado_membresia }}
+                </span>
+
+            </div>
+
+            <div class="credential-body">
+
+                <div class="client-side">
+
+                    <span class="small-label">
+                        CLIENTE
+                    </span>
+
+                    <h1>
+                        {{ cliente.nombre }}
+                    </h1>
+
+                    <div class="membership-box">
+
+                        <div>
+                            <span>Vencimiento</span>
+                            <strong>
+                                {% if fecha_vencimiento %}
+                                    {{ fecha_vencimiento|date:"d/m/Y" }}
+                                {% else %}
+                                    No registrado
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Teléfono</span>
+                            <strong>{{ cliente.telefono|default:"No registrado" }}</strong>
+                        </div>
+
+                        <div>
+                            <span>Correo</span>
+                            <strong>{{ cliente.email }}</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="qr-side">
+
+                    <div class="qr-frame">
+                        {% if cliente.qr_imagen %}
+                            <img src="{{ cliente.qr_imagen.url }}" alt="QR de {{ cliente.nombre }}">
+                        {% else %}
+                            <p>No hay QR generado</p>
+                        {% endif %}
+                    </div>
+
+                    <span class="qr-note">
+                        Presenta este código al ingresar
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="credential-footer">
+                <span>Credencial personal e intransferible</span>
+                <strong>ID Cliente: {{ cliente.id }}</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

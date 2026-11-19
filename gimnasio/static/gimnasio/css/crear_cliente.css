@@ -1,0 +1,227 @@
+.crear-cliente-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px 70px;
+}
+
+.crear-cliente-header {
+    background: linear-gradient(135deg, #111827, #1f2937);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 28px;
+    padding: 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, .35);
+    margin-bottom: 30px;
+}
+
+.crear-label {
+    display: inline-block;
+    background: rgba(34, 197, 94, .15);
+    color: #22c55e;
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.crear-cliente-header h1 {
+    font-size: 3rem;
+    color: #f8fafc;
+    margin-bottom: 10px;
+}
+
+.crear-cliente-header p {
+    color: #94a3b8;
+    max-width: 700px;
+}
+
+.back-client-btn {
+    padding: 14px 22px;
+    border-radius: 14px;
+    background: transparent;
+    border: 1px solid rgba(34, 197, 94, .45);
+    color: #22c55e;
+    font-weight: 900;
+    transition: .3s;
+    white-space: nowrap;
+}
+
+.back-client-btn:hover {
+    background: #22c55e;
+    color: white;
+}
+
+.crear-cliente-layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 25px;
+}
+
+.info-preview-card,
+.crear-form-card {
+    background: #111827;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .3);
+}
+
+.preview-icon {
+    width: 70px;
+    height: 70px;
+    background: #22c55e;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.4rem;
+    margin-bottom: 25px;
+}
+
+.info-preview-card h3,
+.crear-form-card h3 {
+    font-size: 1.5rem;
+    color: #f8fafc;
+    margin-bottom: 15px;
+}
+
+.info-preview-card p {
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.preview-list {
+    display: grid;
+    gap: 14px;
+}
+
+.preview-list div {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, .06);
+    padding: 14px;
+    border-radius: 14px;
+}
+
+.preview-list i {
+    color: #22c55e;
+    font-size: 1.3rem;
+}
+
+.preview-list span {
+    color: #e5e7eb;
+    font-weight: 700;
+}
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    color: #cbd5e1;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.form-group input {
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, .12);
+    color: white;
+    padding: 15px 18px;
+    border-radius: 14px;
+    outline: none;
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, .15);
+}
+
+.check-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 25px 0;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, .08);
+    padding: 16px;
+    border-radius: 14px;
+}
+
+.check-group input {
+    width: 18px;
+    height: 18px;
+    accent-color: #22c55e;
+}
+
+.check-group label {
+    color: #f8fafc;
+    font-weight: 800;
+}
+
+.submit-client-btn {
+    width: 100%;
+    border: none;
+    background: #22c55e;
+    color: white;
+    padding: 17px 25px;
+    border-radius: 16px;
+    font-weight: 900;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.submit-client-btn:hover {
+    background: #16a34a;
+    transform: translateY(-2px);
+}
+
+.messages-box {
+    margin-bottom: 25px;
+}
+
+.message {
+    padding: 15px 20px;
+    border-radius: 14px;
+    font-weight: 800;
+}
+
+.message.error {
+    background: rgba(239, 68, 68, .15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, .4);
+}
+
+.message.success {
+    background: rgba(34, 197, 94, .15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, .4);
+}
+
+@media(max-width: 900px) {
+    .crear-cliente-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .crear-cliente-header h1 {
+        font-size: 2.3rem;
+    }
+
+    .crear-cliente-layout {
+        grid-template-columns: 1fr;
+    }
+}

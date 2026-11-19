@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Gimnasio{% endblock %}</title>
+
+    <!-- CSS principal del sistema -->
+    <link rel="stylesheet" href="{% static 'gimnasio/css/styles.css' %}?v=20000">
+
+    <!-- Iconos -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- CSS extra de cada vista -->
+    {% block extra_css %}
+    {% endblock %}
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <!-- LOGO -->
+    <a href="{% url 'home' %}" class="logo-container logo-link">
+
+        <div class="logo-icon">
+            <i class="bx bx-dumbbell"></i>
+        </div>
+
+        <div class="logo-text">
+            <h2>GYM CONTROL</h2>
+            <span>Professional System</span>
+        </div>
+
+    </a>
+
+    <!-- BUSCADOR GLOBAL -->
+    <div class="navbar-search-wrapper">
+
+        <form action="{% url 'busqueda_global' %}" method="GET" class="navbar-search" autocomplete="off">
+
+            <input 
+                type="text" 
+                name="q" 
+                id="globalSearchInput"
+                placeholder="Buscar cliente, teléfono, pago..."
+                value="{{ request.GET.q }}"
+            >
+
+            <button type="submit">
+                <i class="bx bx-search"></i>
+            </button>
+
+        </form>
+
+        <div class="search-suggestions" id="searchSuggestions"></div>
+
+    </div>
+
+    <!-- MENÚ PRINCIPAL -->
+    <nav class="nav-links">
+
+        <a href="{% url 'dashboard' %}" class="nav-link">
+            Dashboard
+        </a>
+
+        <a href="{% url 'home' %}" class="nav-link">
+            Inicio
+        </a>
+
+        <a href="{% url 'lista_clientes' %}" class="nav-link">
+            Clientes
+        </a>
+
+        <a href="{% url 'punto_venta' %}" class="nav-link">
+            POS
+        </a>
+
+        <a href="{% url 'lista_productos' %}" class="nav-link">
+            Productos
+        </a>
+
+        <a href="{% url 'escanear_qr' %}" class="nav-link">
+            Escanear QR
+        </a>
+
+        <!-- DROPDOWN MÁS -->
+        <div class="nav-dropdown">
+
+            <button type="button" class="nav-dropdown-btn">
+                Más
+                <i class="bx bx-chevron-down"></i>
+            </button>
+
+            <div class="nav-dropdown-menu">
+
+                <a href="{% url 'corte_caja' %}">
+                    <i class="bx bx-money-withdraw"></i>
+                    <span>Corte de caja</span>
+                </a>
+
+                <a href="{% url 'lista_pagos' %}">
+                    <i class="bx bx-credit-card"></i>
+                    <span>Pagos</span>
+                </a>
+
+                <a href="{% url 'lista_accesos' %}">
+                    <i class="bx bx-log-in-circle"></i>
+                    <span>Accesos</span>
+                </a>
+
+                <a href="#">
+                    <i class="bx bx-bar-chart-alt-2"></i>
+                    <span>Reportes</span>
+                </a>
+
+                <a href="{% url 'alertas_membresias' %}">
+                    <i class="bx bx-bell"></i>
+                    <span>Alertas</span>
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+</header>
+
+<main class="main-container">
+    {% block content %}
+    {% endblock %}
+</main>
+
+<!-- BOTÓN GLOBAL PARA ESCANEAR QR DESDE TELÉFONO -->
+<button type="button" class="floating-scan-btn" onclick="abrirEscanerGlobalCamara()">
+    <i class="bx bx-qr-scan"></i>
+    Escanear
+</button>
+
+<!-- MODAL GLOBAL DE ESCÁNER CON CÁMARA -->
+<div class="global-camera-modal" id="globalCameraModal">
+
+    <div class="global-camera-card">
+
+        <div class="global-camera-header">
+
+            <div>
+                <h2>Escanear acceso</h2>
+                <p>Apunta la cámara al código QR del cliente.</p>
+            </div>
+
+            <button type="button" onclick="cerrarEscanerGlobalCamara()">
+                <i class="bx bx-x"></i>
+            </button>
+
+        </div>
+
+        <div id="globalCameraReader"></div>
+
+        <div class="global-camera-result" id="globalCameraResult">
+            Esperando lectura...
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ALERTA GLOBAL DE ACCESO POR QR -->
+<div class="global-access-overlay" id="globalAccessOverlay">
+
+    <div class="global-access-card" id="globalAccessCard">
+
+        <div class="global-access-icon" id="globalAccessIcon">
+            <i class="bx bx-check"></i>
+        </div>
+
+        <h2 id="globalAccessTitle">
+            ACCESO PERMITIDO
+        </h2>
+
+        <h3 id="globalAccessClient">
+            Cliente
+        </h3>
+
+        <p id="globalAccessMessage">
+            Acceso validado correctamente.
+        </p>
+
+        <button type="button" onclick="cerrarAlertaGlobalAcceso()">
+            Cerrar
+        </button>
+
+    </div>
+
+</div>
+
+<footer class="footer">
+    <p>© 2026 Gym Control System — Todos los derechos reservados</p>
+</footer>
+
+<!-- Librería para escanear QR con cámara -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<!-- JS principal del sistema -->
+ <script src="{% static 'gimnasio/js/main.js' %}?v=40000"></script>
+
+<!-- JS extra de cada vista -->
+{% block extra_js %}
+{% endblock %}
+
+</body>
+</html>

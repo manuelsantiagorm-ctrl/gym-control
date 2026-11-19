@@ -1,0 +1,152 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Clientes | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/lista_clientes.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section class="clientes-page">
+
+    <div class="clientes-header">
+
+        <div>
+            <span class="clientes-label">
+                GESTIÓN DE CLIENTES
+            </span>
+
+            <h1>
+                Clientes registrados
+            </h1>
+
+            <p>
+                Consulta clientes, estado de membresía, vencimientos, pagos y credenciales digitales.
+            </p>
+        </div>
+        <a href="{% url 'crear_cliente' %}" class="add-client-btn">
+            Nuevo cliente
+        </a>
+
+    </div>
+
+    <div class="clientes-tools">
+
+        <form method="GET" class="search-box">
+
+            <input 
+                type="text" 
+                name="q" 
+                value="{{ query }}" 
+                placeholder="Buscar por nombre, teléfono o correo..."
+            >
+
+            <button type="submit">
+                Buscar
+            </button>
+
+        </form>
+
+        <div class="total-box">
+            <span>Total clientes</span>
+            <strong>{{ total_clientes }}</strong>
+        </div>
+
+    </div>
+
+    <div class="clientes-table-card">
+
+        {% if clientes_data %}
+
+            <div class="clientes-table">
+
+                <div class="clientes-table-head">
+                    <span>Cliente</span>
+                    <span>Contacto</span>
+                    <span>Membresía</span>
+                    <span>Vencimiento</span>
+                    <span>Acciones</span>
+                </div>
+
+                {% for item in clientes_data %}
+
+                    <div class="clientes-table-row">
+
+                        <div class="cliente-info">
+
+                            {% if item.cliente.qr_imagen %}
+                                <img src="{{ item.cliente.qr_imagen.url }}" alt="QR">
+                            {% else %}
+                                <div class="avatar-placeholder">
+                                    {{ item.cliente.nombre|slice:":1" }}
+                                </div>
+                            {% endif %}
+
+                            <div>
+                                <strong>{{ item.cliente.nombre }}</strong>
+                                <small>Registrado: {{ item.cliente.fecha_registro|date:"d/m/Y" }}</small>
+                            </div>
+
+                        </div>
+
+                        <div class="contact-info">
+                            <span>{{ item.cliente.telefono|default:"Sin teléfono" }}</span>
+                            <small>{{ item.cliente.email }}</small>
+                        </div>
+
+                        <div>
+                            <span class="client-status status-{{ item.estado_color }}">
+                                {{ item.estado }}
+                            </span>
+                        </div>
+
+                        <div class="date-info">
+                            {% if item.vencimiento %}
+                                {{ item.vencimiento|date:"d/m/Y" }}
+                            {% else %}
+                                No registrado
+                            {% endif %}
+                        </div>
+
+                        <div class="actions-box">
+
+                            <a href="{% url 'detalle_cliente' item.cliente.id %}" class="action-btn view">
+                                Perfil
+                            </a>
+
+                            <a href="{% url 'registrar_pago_cliente' item.cliente.id %}" class="action-btn pay">
+                                Pago
+                            </a>
+
+                            <a href="{% url 'credencial_cliente' item.cliente.id %}" class="action-btn credential">
+                                Credencial
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-client-box">
+                <h3>No hay clientes encontrados</h3>
+                <p>
+                    Intenta con otra búsqueda o registra un nuevo cliente.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

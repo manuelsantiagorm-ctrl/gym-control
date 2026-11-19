@@ -1,0 +1,155 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Alertas de membresías | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/alertas_membresias.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section class="alertas-page">
+
+    <div class="alertas-header">
+
+        <div>
+            <span class="alertas-label">
+                ALERTAS DE MEMBRESÍAS
+            </span>
+
+            <h1>
+                Membresías por vencer
+            </h1>
+
+            <p>
+                Revisa clientes que vencen hoy, próximos a vencer, vencidos o sin membresía registrada.
+            </p>
+        </div>
+
+        <a href="{% url 'lista_clientes' %}" class="alertas-main-btn">
+            Ver clientes
+        </a>
+
+    </div>
+
+    <div class="alertas-date-card">
+        <span>Fecha actual</span>
+        <strong>{{ hoy|date:"d/m/Y" }}</strong>
+        <small>Rango por vencer: hasta {{ limite_por_vencer|date:"d/m/Y" }}</small>
+    </div>
+
+    <div class="alertas-stats-grid">
+
+        <div class="alerta-stat-card danger">
+            <span>Vencen hoy</span>
+            <strong>{{ total_vencen_hoy }}</strong>
+        </div>
+
+        <div class="alerta-stat-card warning">
+            <span>Por vencer</span>
+            <strong>{{ total_por_vencer }}</strong>
+            <small>Próximos 3 días</small>
+        </div>
+
+        <div class="alerta-stat-card expired">
+            <span>Vencidos</span>
+            <strong>{{ total_vencidos }}</strong>
+        </div>
+
+        <div class="alerta-stat-card neutral">
+            <span>Sin membresía</span>
+            <strong>{{ total_sin_membresia }}</strong>
+        </div>
+
+    </div>
+
+    <div class="alertas-layout">
+
+        <div class="alertas-card">
+            <div class="alertas-section-title danger">
+                <h2>Vencen hoy</h2>
+                <span>{{ total_vencen_hoy }}</span>
+            </div>
+
+            {% if vencen_hoy %}
+                <div class="clientes-alerta-list">
+                    {% for cliente in vencen_hoy %}
+                        {% include 'gimnasio/partials/cliente_alerta_card.html' with cliente=cliente tipo_alerta="hoy" %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-alerta">
+                    <h3>No hay membresías que vencen hoy</h3>
+                    <p>Todo está en orden por ahora.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="alertas-card">
+            <div class="alertas-section-title warning">
+                <h2>Por vencer</h2>
+                <span>{{ total_por_vencer }}</span>
+            </div>
+
+            {% if por_vencer %}
+                <div class="clientes-alerta-list">
+                    {% for cliente in por_vencer %}
+                        {% include 'gimnasio/partials/cliente_alerta_card.html' with cliente=cliente tipo_alerta="por_vencer" %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-alerta">
+                    <h3>No hay clientes por vencer</h3>
+                    <p>No hay membresías que venzan en los próximos 3 días.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="alertas-card">
+            <div class="alertas-section-title expired">
+                <h2>Vencidos</h2>
+                <span>{{ total_vencidos }}</span>
+            </div>
+
+            {% if vencidos %}
+                <div class="clientes-alerta-list">
+                    {% for cliente in vencidos %}
+                        {% include 'gimnasio/partials/cliente_alerta_card.html' with cliente=cliente tipo_alerta="vencido" %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-alerta">
+                    <h3>No hay clientes vencidos</h3>
+                    <p>Excelente, no hay membresías vencidas.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="alertas-card">
+            <div class="alertas-section-title neutral">
+                <h2>Sin membresía</h2>
+                <span>{{ total_sin_membresia }}</span>
+            </div>
+
+            {% if sin_membresia %}
+                <div class="clientes-alerta-list">
+                    {% for cliente in sin_membresia %}
+                        {% include 'gimnasio/partials/cliente_alerta_card.html' with cliente=cliente tipo_alerta="sin_membresia" %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-alerta">
+                    <h3>Todos tienen membresía registrada</h3>
+                    <p>No hay clientes sin membresía.</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

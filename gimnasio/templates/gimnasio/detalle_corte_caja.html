@@ -1,0 +1,249 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Detalle de corte | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/corte_caja.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+
+<section class="corte-page">
+
+    <div class="corte-header">
+
+        <div>
+            <span class="corte-label">
+                DETALLE DE CORTE
+            </span>
+
+            <h1>
+                Corte #{{ corte.id }}
+            </h1>
+
+            <p>
+                Resumen guardado del corte de caja del {{ corte.fecha|date:"d/m/Y" }}.
+            </p>
+        </div>
+
+        <div class="fecha-form">
+            <a href="{% url 'corte_caja' %}" class="save-corte-btn">
+                Volver a cortes
+            </a>
+        </div>
+
+    </div>
+
+    <div class="corte-date-box">
+        <span>Guardado por</span>
+
+        <strong>
+            {% if corte.usuario %}
+                {{ corte.usuario.username }}
+            {% else %}
+                Usuario no registrado
+            {% endif %}
+        </strong>
+
+        <small>
+            {{ corte.fecha_creacion|date:"d/m/Y H:i" }}
+        </small>
+    </div>
+
+    <div class="totales-grid">
+
+        <div class="total-card main">
+            <span>Total general</span>
+            <strong>${{ corte.total_general }}</strong>
+        </div>
+
+        <div class="total-card">
+            <span>Pagos membresías</span>
+            <strong>${{ corte.total_pagos_membresias }}</strong>
+            <small>{{ corte.cantidad_pagos }} pago{% if corte.cantidad_pagos != 1 %}s{% endif %}</small>
+        </div>
+
+        <div class="total-card">
+            <span>Ventas productos</span>
+            <strong>${{ corte.total_ventas_productos }}</strong>
+            <small>{{ corte.cantidad_ventas }} venta{% if corte.cantidad_ventas != 1 %}s{% endif %}</small>
+        </div>
+
+    </div>
+
+    <div class="metodos-grid">
+
+        <div class="metodo-card">
+            <span>Efectivo</span>
+            <strong>${{ corte.total_efectivo }}</strong>
+        </div>
+
+        <div class="metodo-card">
+            <span>Tarjeta</span>
+            <strong>${{ corte.total_tarjeta }}</strong>
+        </div>
+
+        <div class="metodo-card">
+            <span>Transferencia</span>
+            <strong>${{ corte.total_transferencia }}</strong>
+        </div>
+
+        <div class="metodo-card">
+            <span>Mixto</span>
+            <strong>${{ corte.total_mixto }}</strong>
+        </div>
+
+    </div>
+
+    <div class="guardar-corte-card">
+
+        <h2>Observaciones</h2>
+
+        {% if corte.observaciones %}
+            <p>{{ corte.observaciones }}</p>
+        {% else %}
+            <p>Sin observaciones registradas.</p>
+        {% endif %}
+
+    </div>
+
+    <div class="corte-layout">
+
+        <div class="corte-card">
+
+            <div class="section-title">
+                <h2>Pagos de membresías del día</h2>
+                <span>{{ cantidad_pagos }}</span>
+            </div>
+
+            {% if pagos %}
+
+                <div class="mini-table">
+
+                    <div class="mini-table-head pagos-head">
+                        <span>Cliente</span>
+                        <span>Membresía</span>
+                        <span>Método</span>
+                        <span>Monto</span>
+                    </div>
+
+                    {% for pago in pagos %}
+                        <div class="mini-table-row pagos-row">
+
+                            <div>
+                                <strong>{{ pago.cliente.nombre }}</strong>
+                                <small>{{ pago.fecha_pago|date:"d/m/Y H:i" }}</small>
+                            </div>
+
+                            <div>
+                                <strong>
+                                    {{ pago.get_tipo_membresia_display }} x{{ pago.cantidad_periodos }}
+                                </strong>
+
+                                {% if pago.membresia %}
+                                    <small>
+                                        {{ pago.membresia.fecha_inicio|date:"d/m/Y" }}
+                                        -
+                                        {{ pago.membresia.fecha_fin|date:"d/m/Y" }}
+                                    </small>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <span class="method-badge">
+                                    {{ pago.get_metodo_pago_display }}
+                                </span>
+                            </div>
+
+                            <div class="amount">
+                                ${{ pago.monto }}
+                            </div>
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-box">
+                    <h3>No hay pagos en esta fecha</h3>
+                    <p>No se encontraron pagos de membresías para este corte.</p>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <div class="corte-card">
+
+            <div class="section-title">
+                <h2>Ventas de productos del día</h2>
+                <span>{{ cantidad_ventas }}</span>
+            </div>
+
+            {% if ventas %}
+
+                <div class="mini-table">
+
+                    <div class="mini-table-head ventas-head">
+                        <span>Venta</span>
+                        <span>Cliente</span>
+                        <span>Método</span>
+                        <span>Total</span>
+                    </div>
+
+                    {% for venta in ventas %}
+                        <div class="mini-table-row ventas-row">
+
+                            <div>
+                                <strong>Venta #{{ venta.id }}</strong>
+                                <small>{{ venta.fecha|date:"d/m/Y H:i" }}</small>
+                            </div>
+
+                            <div>
+                                {% if venta.cliente %}
+                                    <strong>{{ venta.cliente.nombre }}</strong>
+                                {% else %}
+                                    <strong>Venta general</strong>
+                                {% endif %}
+
+                                {% if venta.usuario %}
+                                    <small>{{ venta.usuario.username }}</small>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <span class="method-badge">
+                                    {{ venta.get_metodo_pago_display }}
+                                </span>
+                            </div>
+
+                            <div class="amount">
+                                ${{ venta.total }}
+                            </div>
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-box">
+                    <h3>No hay ventas en esta fecha</h3>
+                    <p>No se encontraron ventas de productos para este corte.</p>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

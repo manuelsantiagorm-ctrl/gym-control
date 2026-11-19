@@ -1,0 +1,235 @@
+{% extends 'gimnasio/base.html' %}
+{% load static %}
+
+{% block title %}
+Pagos | Gym Control
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gimnasio/css/lista_pagos.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+
+<section class="pagos-page">
+
+    <div class="pagos-header">
+
+        <div>
+            <span class="pagos-label">
+                CONTROL FINANCIERO
+            </span>
+
+            <h1>
+                Historial de pagos
+            </h1>
+
+            <p>
+                Consulta pagos registrados, métodos de pago, clientes y membresías renovadas.
+            </p>
+        </div>
+
+        <a href="{% url 'lista_clientes' %}" class="add-payment-btn">
+            Registrar nuevo pago
+        </a>
+
+    </div>
+
+    {% if messages %}
+        <div class="messages-box">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <span>Total recaudado</span>
+            <strong>${{ total_recaudado }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Total de pagos</span>
+            <strong>{{ total_pagos }}</strong>
+        </div>
+
+    </div>
+
+    <div class="pagos-tools">
+
+        <form method="GET" class="search-box">
+
+            <input 
+                type="text" 
+                name="q" 
+                value="{{ query }}" 
+                placeholder="Buscar por cliente, teléfono, correo, método, membresía o notas..."
+            >
+
+            <button type="submit">
+                Buscar
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="pagos-table-card">
+
+        {% if pagos %}
+
+            <div class="pagos-table">
+
+                <div class="pagos-table-head">
+                    <span>Cliente</span>
+                    <span>Membresía</span>
+                    <span>Monto</span>
+                    <span>Método</span>
+                    <span>Fecha pago</span>
+                    <span>Vigencia</span>
+                    <span>Notas</span>
+                    <span>Acciones</span>
+                </div>
+
+                {% for pago in pagos %}
+
+                    <div class="pagos-table-row">
+
+                        <div class="cliente-info">
+
+                            {% if pago.cliente.qr_imagen %}
+                                <img src="{{ pago.cliente.qr_imagen.url }}" alt="QR">
+                            {% else %}
+                                <div class="avatar-placeholder">
+                                    {{ pago.cliente.nombre|slice:":1" }}
+                                </div>
+                            {% endif %}
+
+                            <div>
+                                <strong>
+                                    {{ pago.cliente.nombre }}
+                                </strong>
+
+                                <small>
+                                    {{ pago.cliente.email }}
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <div class="membresia-info">
+
+                            {% if pago.membresia %}
+                                <strong>
+                                    {{ pago.membresia.get_tipo_display }}
+                                </strong>
+
+                                <small>
+                                    Generada automáticamente
+                                </small>
+                            {% else %}
+                                <strong>
+                                    {{ pago.get_tipo_membresia_display }}
+                                </strong>
+
+                                <small>
+                                    Sin membresía ligada
+                                </small>
+                            {% endif %}
+
+                        </div>
+
+                        <div class="amount-info">
+                            ${{ pago.monto }}
+                        </div>
+
+                        <div>
+                            <span class="method-badge">
+                                {{ pago.get_metodo_pago_display }}
+                            </span>
+                        </div>
+
+                        <div class="date-info">
+                            {{ pago.fecha_pago|date:"d/m/Y" }}
+                            <small>{{ pago.fecha_pago|time:"H:i" }}</small>
+                        </div>
+
+                        <div class="vigencia-info">
+                            {% if pago.membresia %}
+                                <strong>
+                                    {{ pago.membresia.fecha_inicio|date:"d/m/Y" }}
+                                </strong>
+
+                                <small>
+                                    al {{ pago.membresia.fecha_fin|date:"d/m/Y" }}
+                                </small>
+                            {% else %}
+                                <strong>
+                                    —
+                                </strong>
+
+                                <small>
+                                    No disponible
+                                </small>
+                            {% endif %}
+                        </div>
+
+                        <div class="notas-info">
+                            {% if pago.notas %}
+                                {{ pago.notas|truncatechars:45 }}
+                            {% else %}
+                                <span class="muted-text">
+                                    Sin notas
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="actions-box">
+
+                            <a href="{% url 'detalle_cliente' pago.cliente.id %}" class="action-btn view">
+                                Perfil
+                            </a>
+
+                            <a href="{% url 'registrar_pago_cliente' pago.cliente.id %}" class="action-btn pay">
+                                Nuevo pago
+                            </a>
+
+                            <a href="{% url 'credencial_cliente' pago.cliente.id %}" class="action-btn credential">
+                                Credencial
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-payment-box">
+                <h3>
+                    No hay pagos registrados
+                </h3>
+
+                <p>
+                    Cuando registres pagos de clientes, aparecerán aquí.
+                </p>
+
+                <a href="{% url 'lista_clientes' %}" class="add-payment-btn">
+                    Registrar pago
+                </a>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}
